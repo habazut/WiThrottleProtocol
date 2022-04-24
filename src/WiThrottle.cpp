@@ -28,6 +28,7 @@
 
 //#include <ArduinoTime.h>
 //#include <TimeLib.h>
+#include <vector>
 
 #include "WiThrottle.h"
 
@@ -711,10 +712,23 @@ WiThrottle::addLocomotive(String address)
         String cmd = "MT+" + address + PROPERTY_SEPARATOR + rosterName;
         sendCommand(cmd);
 
-        currentAddress = address;
-        ok = true;
+        boolean locoAlreadtyInList = false;
+        for(int i=0;i<locos.size();i++) {
+            Serial.println("checking");
+            if (locos[i].equals(address)) {
+                locoAlreadtyInList = true;
+                break;
+            }
+        } 
+        if (!locoAlreadtyInList) {
+            Serial.println("adding");
+            locos.push_back(address);
+            currentAddress = locos.front();
+            Serial.println("adding");
 
-        locomotiveSelected = true;
+            locomotiveSelected = true;
+        }
+        ok = true;
     }
 
     return ok;
@@ -744,8 +758,21 @@ WiThrottle::releaseLocomotive(String address)
     cmd.concat("r");
     sendCommand(cmd);
 
-    locomotiveSelected = false;
-
+    // std::vector<String>::iterator it;
+    // for(it=locos.begin();it!=locos.end();it++) {
+    //     if (locos.at(it).equals(address)) {
+    for(int i=0;locos.size();i++) {
+        if (locos[i].equals(address)) {
+           locos.erase(locos.begin()+i);
+           break;
+        }
+    } 
+    if (locos.size()==0) { 
+        locomotiveSelected = false;
+        currentAddress = "";
+    } else {        
+        currentAddress = locos.front();
+    }
     return true;
 }
 

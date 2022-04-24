@@ -121,6 +121,7 @@ class WiThrottle
     bool addLocomotive(String address);  // address is [S|L]nnnn (where n is 0-10000)
     bool stealLocomotive(String address);   // address is [S|L]nnnn (where n is 0-10000)
     bool releaseLocomotive(String address = "*");
+    String getLeadLocomotive();
 
     void setFunction(int funcnum, bool pressed);
 
@@ -133,6 +134,7 @@ class WiThrottle
 
     void emergencyStop();
 
+    std::vector<String> locomotives;
     
 
   private:
