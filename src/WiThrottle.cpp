@@ -713,18 +713,15 @@ WiThrottle::addLocomotive(String address)
         sendCommand(cmd);
 
         boolean locoAlreadtyInList = false;
-        for(int i=0;i<locos.size();i++) {
-            Serial.println("checking");
-            if (locos[i].equals(address)) {
+        for(int i=0;i<locomotives.size();i++) {
+            if (locomotives[i].equals(address)) {
                 locoAlreadtyInList = true;
                 break;
             }
         } 
         if (!locoAlreadtyInList) {
-            Serial.println("adding");
-            locos.push_back(address);
-            currentAddress = locos.front();
-            Serial.println("adding");
+            locomotives.push_back(address);
+            currentAddress = locomotives.front();
 
             locomotiveSelected = true;
         }
@@ -758,24 +755,28 @@ WiThrottle::releaseLocomotive(String address)
     cmd.concat("r");
     sendCommand(cmd);
 
-    // std::vector<String>::iterator it;
-    // for(it=locos.begin();it!=locos.end();it++) {
-    //     if (locos.at(it).equals(address)) {
-    for(int i=0;locos.size();i++) {
-        if (locos[i].equals(address)) {
-           locos.erase(locos.begin()+i);
+    for(int i=0;locomotives.size();i++) {
+        if (locomotives[i].equals(address)) {
+           locomotives.erase(locomotives.begin()+i);
            break;
         }
     } 
-    if (locos.size()==0) { 
+    if (locomotives.size()==0) { 
         locomotiveSelected = false;
         currentAddress = "";
     } else {        
-        currentAddress = locos.front();
+        currentAddress = locomotives.front();
     }
     return true;
 }
 
+String
+WiThrottle::getLeadLocomotive() {
+    if (locomotives.size()==0) { 
+        return locomotives.front();
+    }
+    return "";
+}
 
 bool
 WiThrottle::setSpeed(int speed)
