@@ -755,7 +755,7 @@ WiThrottleProtocol::releaseLocomotive(String address)
     cmd.concat("r");
     sendCommand(cmd);
 
-    for(int i=0;locomotives.size();i++) {
+    for(int i=0;i<locomotives.size();i++) {
         if (locomotives[i].equals(address)) {
            locomotives.erase(locomotives.begin()+i);
            break;
@@ -772,10 +772,23 @@ WiThrottleProtocol::releaseLocomotive(String address)
 
 String
 WiThrottleProtocol::getLeadLocomotive() {
-    if (locomotives.size()==0) { 
+    if (locomotives.size()>=0) { 
         return locomotives.front();
     }
     return "";
+}
+
+String
+WiThrottleProtocol::getLocomotiveAtPosition(int position) {
+    if (locomotives.size()>=0) { 
+        return locomotives[position];
+    }
+    return "";
+}
+
+int
+WiThrottleProtocol::getNumberOfLocomotives() {
+    return locomotives.size();
 }
 
 bool

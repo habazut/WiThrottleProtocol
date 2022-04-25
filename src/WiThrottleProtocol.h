@@ -122,6 +122,8 @@ class WiThrottleProtocol
     bool stealLocomotive(String address);   // address is [S|L]nnnn (where n is 0-10000)
     bool releaseLocomotive(String address = "*");
     String getLeadLocomotive();
+    String getLocomotiveAtPosition(int position);
+    int getNumberOfLocomotives();
 
     void setFunction(int funcnum, bool pressed);
 
