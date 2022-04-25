@@ -1,24 +1,19 @@
-// WiThrottle library: Roster example
+// WiThrottleProtocol library: Delegate example
 //
-// Shows how to use a delegate class to receive the roster list
+// Shows how to create a delegate class to handle callbacks
 // Tested with ESP32-DEVKITC development board
 //
 // Luca Dentella, 2020
 
 #include <WiFi.h>
-#include <WiThrottle.h>
+#include <WiThrottleProtocol.h>
 
 // Delegate class
-class MyDelegate : public WiThrottleDelegate {
+class MyDelegate : public WiThrottleProtocolDelegate {
   
   public:
-    void receivedRosterEntries(int rosterSize) {     
-      Serial.print("Number of locomotives in the roster: "); Serial.println(rosterSize);
-    }
-    void receivedRosterEntry(int index, String name, int address, char length) {
-      Serial.print("LOCO "); Serial.println(index);     
-      Serial.print("- Name: "); Serial.println(name);
-      Serial.print("- Address: "); Serial.print(address); Serial.println(length);  
+    void receivedVersion(String version) {     
+      Serial.print("Received version: "); Serial.println(version);  
     }
 };
 
@@ -30,13 +25,13 @@ int serverPort = 12090;
 
 // Global objects
 WiFiClient client;
-WiThrottle wiThrottle;
+WiThrottleProtocol wiThrottleProtocol;
 MyDelegate myDelegate;
   
 void setup() {
   
   Serial.begin(115200);
-  Serial.println("WiThrottle Roster Demo");
+  Serial.println("WiThrottleProtocol Delegate Demo");
   Serial.println();
 
   // Connect to WiFi network
@@ -54,20 +49,19 @@ void setup() {
   Serial.println("Connected to the server");
 
   // Uncomment for logging on Serial
-  //wiThrottle.setLogStream(&Serial);
+  //wiThrottleProtocol.setLogStream(&Serial);
 
-  // Pass the delegate instance to wiThrottle
-  wiThrottle.setDelegate(&myDelegate);
+  // Pass the delegate instance to wiThrottleProtocol
+  wiThrottleProtocol.setDelegate(&myDelegate);
 
-  // Pass the communication to WiThrottle
-  wiThrottle.connect(&client);
+  // Pass the communication to wiThrottleProtocol
+  wiThrottleProtocol.connect(&client);
   Serial.println("WiThrottle connected");
-  wiThrottle.setDeviceName("myFirstThrottle");  
-  wiThrottle.addLocomotive("S3");
+  wiThrottleProtocol.setDeviceName("myFirstThrottle");  
 }
   
 void loop() {
 
   // parse incoming messages
-  wiThrottle.check();
+  wiThrottleProtocol.check();
 }

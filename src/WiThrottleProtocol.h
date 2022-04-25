@@ -1,10 +1,10 @@
 /* -*- c++ -*-
  *
- * WiThrottle
+ * WiThrottleProtocol
  *
  * This package implements a WiThrottle protocol connection,
  * allow a device to communicate with a JMRI server or other
- * WiThrottle device (like the Digitrax LNWI).
+ * WiThrottleProtocol device (like the Digitrax LNWI).
  *
  * Copyright © 2018-2019 Blue Knobby Systems Inc.
  *
@@ -62,7 +62,7 @@ class NullStream : public Stream {
 	size_t write(const uint8_t *buffer, size_t size) { return size; }
 };
 
-class WiThrottleDelegate
+class WiThrottleProtocolDelegate
 {
   public:
   
@@ -92,13 +92,13 @@ class WiThrottleDelegate
 };
 
 
-class WiThrottle
+class WiThrottleProtocol
 {
   public:
     
-	WiThrottle(bool server = false);
+	WiThrottleProtocol(bool server = false);
 
-	void setDelegate(WiThrottleDelegate *delegate);
+	void setDelegate(WiThrottleProtocolDelegate *delegate);
 	void setLogStream(Stream *console);
 
 	void connect(Stream *stream);
@@ -145,7 +145,7 @@ class WiThrottle
     Stream *console;
 	NullStream nullStream;
 	
-	WiThrottleDelegate *delegate = NULL;
+	WiThrottleProtocolDelegate *delegate = NULL;
 
     bool processCommand(char *c, int len);
     bool processLocomotiveAction(char *c, int len);

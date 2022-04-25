@@ -1,4 +1,4 @@
-# WiThrottle library
+# WiThrottle<sup>TM</sup> network protocol library
 
 This library implements the WiThrottle protocol (as used in JMRI and other servers), allowing an device to connect to the server and act as a client (such as a dedicated fast clock device or a hardware based throttle).
 
@@ -6,7 +6,7 @@ The implementation of this library is tested on ESP32 based devices running the 
 
 ## Basic Design Principles
 
-First of all, this library implements WiThrottle in a non-blocking fashion.  After creating a WiThrottle object, you set up various necessities (like the network connection and a debug console) (see [Dependency Injection][depinj]).   Then call the ```check()``` method as often as you can (ideally, once per invocation of the ```loop()``` method) and the library will manage the I/O stream, reading in command and calling methods on the [delegate] as information is available.
+First of all, this library implements the WiThrottle protocol in a non-blocking fashion.  After creating a WiThrottleProtocol object, you set up various necessities (like the network connection and a debug console) (see [Dependency Injection][depinj]).   Then call the ```check()``` method as often as you can (ideally, once per invocation of the ```loop()``` method) and the library will manage the I/O stream, reading in command and calling methods on the [delegate] as information is available.
 
 These patterns (Dependency Injection and Delegation) allow you to keep the different parts of your sketch from becoming too intertwined with each other.  Nothing in the code that manages the pushbuttons or speed knobs needs to have any detailed knowledge of the WiThrottle network protocol.
 
@@ -20,9 +20,9 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
 
 ## Included examples
 
-### WiThrottle_Basic
+### WiThrottleProtocol_Basic
 
-Basic example to implement a WiThrottle client and connect to a server (with static IP).
+Basic example to implement a WiThrottleProtocol client and connect to a server (with static IP).
 
 Change the WiFi settings and enter the IP address of the computer running JMRI (or other WiThrottle server):
 ```
@@ -34,7 +34,7 @@ Compile and run, you should see a new client connected in JMRI:
 
 ![](https://github.com/lucadentella/WiThrottle/raw/master/images/basic-example.jpg)
 
-### WiThrottle_Delegate
+### WiThrottleProtocol_Delegate
 
 Example to show how to implement a delegate class to handle callbacks.
 
@@ -42,7 +42,7 @@ Compile and run, you should see in Serial monitor the server version, printed by
 
 ![](https://github.com/lucadentella/WiThrottle/raw/master/images/delegate-example.jpg)
 
-### WiThrottle_FastTime
+### WiThrottleProtocol_FastTime
 
 Example to show how to get the fasttime from WiThrottle server, and how to transform the timestamp in HOUR:MINUTE format. As explained above, I removed all the external dependences: the library returns a timestamp (method ```getCurrentFastTime()```) and you can choose your preferred library (or none) to parse it.
 
@@ -52,7 +52,7 @@ Compile and run. Use a proper terminal (MobaXterm in my screenshot) to see the t
 
 ![](https://github.com/lucadentella/WiThrottle/raw/master/images/fastclock-example.jpg)
 
-### WiThrottle_Roster
+### WiThrottleProtocol_Roster
 
 Example to show how to get the list of locomotives in the roster. The library parses the roster message (RLx) but **doesn't** store the list. Instead, it offers two callbacks to get the number of entries and, for each entry, name / address / length (**S**hort|**L**ong).
 
@@ -64,24 +64,24 @@ Compile and run, you should see in the Serial monitor the list of locomotives as
 
 ### Basic Setup & Use
 ```
-WiThrottle(bool isServer)
+WiThrottleProtocol(bool isServer)
 ```
-Create a new WiThrottle manager.   You probably only need one in your program, unless you connect to multiple WiThrottle servers at the same time.   
+Create a new WiThrottleProtocol manager.   You probably only need one in your program, unless you connect to multiple WiThrottle protocol servers at the same time.   
 
 ```
 void begin(Stream *console)
 ```
-Initializes the WiThrottle object.   You should call this as part of your ```setup``` function.  You must pass in a pointer to a ```Stream``` object, which is where all debug messages will go.  This can be ```Serial```, or anything similar.  If you pass in ```NULL```, no log messages will be generated.
+Initializes the WiThrottleProtocol object.   You should call this as part of your ```setup``` function.  You must pass in a pointer to a ```Stream``` object, which is where all debug messages will go.  This can be ```Serial```, or anything similar.  If you pass in ```NULL```, no log messages will be generated.
 
 ```
 void connect(Stream *network)
 ```
-Once you have created the network client connection (say, via ```WiFiClient```), configure the WiThrottle library to use it.  After you've connected the client to WiThrottle, do NOT perform any I/O operations on the client object directly.   The WiThrottle library must control all further use of the connection (until you call ```disconnect()```).
+Once you have created the network client connection (say, via ```WiFiClient```), configure the WiThrottleProtocol library to use it.  After you've connected the client to the WiThrottle protocol server, do NOT perform any I/O operations on the client object directly.   The WiThrottleProtocol library must control all further use of the connection (until you call ```disconnect()```).
 
 ```
 void disconnect()
 ```
-Detach the network client connection from the WiThrottle library.   The WiThrottle library will do very little of value after this is called.   I'm not entirely sure this is a useful method, but if I add a ```connect()``` I feel compelled to add ```disconnect()``` for completeness.    
+Detach the network client connection from the WiThrottleProtocol library.   The WiThrottleProtocol library will do very little of value after this is called.   I'm not entirely sure this is a useful method, but if I add a ```connect()``` I feel compelled to add ```disconnect()``` for completeness.    
 
 ```
 bool check()
@@ -91,9 +91,9 @@ This drvies all of the work of the library.  Call this method at least once ever
 If this method returns ```true```, then a command was processed this time through the loop.  There will be many, many, many more times that ```check()``` is called and it returns ```false``` than when it returns ```true```.   
 
 ```
-WiThrottleDelegate *delegate
+WiThrottleProtocolDelegate *delegate
 ```
-This variable holds a pointer to a class that subclasses the ```WiThrottleDelegate``` class.  Once this is set, various methods will be called when protocol commands come in and have been processed.
+This variable holds a pointer to a class that subclasses the ```WiThrottleProtocolDelegate``` class.  Once this is set, various methods will be called when protocol commands come in and have been processed.
 
 ### Fast Time 
 ```
@@ -128,7 +128,7 @@ void addLocomotive(String address)
 ```
 Select the given locomotive address.  The address must be in the form "Snnn" or "Lnnn", where the S or L represent a short or long address, and nnn is the numeric address.   Returns ```true``` if the address was properly formed, ```false``` otherwise.
 
-Note that the WiThrottle library does not yet support adding multiple locomotives at the same time.  
+The WiThrottleProtocol library does provides only basic support adding multiple locomotives at the same time.  
 
 ```
 bool stealLocomotive(String address)
@@ -222,7 +222,7 @@ Indicates that the selected locomotive is configured with the given number of sp
 ```
 void receivedWebPort(int port)
 ```
-Indicates that the WiThrottle is running an auxiliary web server on the given TCP port (at the same address).
+Indicates that the WiThrottle prototocol server is running an auxiliary web server on the given TCP port (at the same address).
 
 
 ```

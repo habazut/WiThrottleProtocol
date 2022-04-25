@@ -1,4 +1,4 @@
-// WiThrottle library: FastTime example
+// WiThrottleProtocol library: FastTime example
 //
 // Shows how to use the Time library (https://github.com/PaulStoffregen/Time)
 // to parse FastTime timestamp 
@@ -8,7 +8,7 @@
 // Luca Dentella, 2020
 
 #include <WiFi.h>
-#include <WiThrottle.h>
+#include <WiThrottleProtocol.h>
 #include <TimeLib.h>
 
 // WiFi and server configuration
@@ -19,13 +19,13 @@ int serverPort = 12090;
 
 // Global objects
 WiFiClient client;
-WiThrottle wiThrottle;
+WiThrottleProtocol wiThrottleProtocol;
 unsigned long lastPrint = 0;
   
 void setup() {
   
   Serial.begin(115200);
-  Serial.println("WiThrottle FastTime Demo");
+  Serial.println("WiThrottleProtocol FastTime Demo");
   Serial.println();
 
   // Connect to WiFi network
@@ -43,22 +43,22 @@ void setup() {
   Serial.println("Connected to the server");
 
   // Uncomment for logging on Serial
-  //wiThrottle.setLogStream(&Serial);
+  //wiThrottleProtocol.setLogStream(&Serial);
 
-  // Pass the communication to WiThrottle
-  wiThrottle.connect(&client);
+  // Pass the communication to wiThrottleProtocol
+  wiThrottleProtocol.connect(&client);
   Serial.println("WiThrottle connected");
-  wiThrottle.setDeviceName("myFirstThrottle");  
+  wiThrottleProtocol.setDeviceName("myFirstThrottle");  
 }
   
 void loop() {
 
   // parse incoming messages
-  wiThrottle.check();
+  wiThrottleProtocol.check();
 
   // every second, get the current fasttime, parse and print
   if(millis() - lastPrint > 1000) {
-    time_t fastTime = (time_t)wiThrottle.getCurrentFastTime();
+    time_t fastTime = (time_t)wiThrottleProtocol.getCurrentFastTime();
     Serial.print(hour(fastTime));
     Serial.print(":");
     Serial.print(minute(fastTime));

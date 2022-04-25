@@ -38,7 +38,7 @@
 #include <TimeLib.h>
 
 #include <WiFi.h>
-#include <WiThrottle.h>
+#include <WiThrottleProtocol.h>
 
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -59,7 +59,7 @@ const int port = 12090;
 static volatile bool wifi_connected = false;
 
 WiFiClient client;
-WiThrottle wiThrottle;
+WiThrottleProtocol wiThrottleProtocol;
 
 Adafruit_7segment clockDisplay = Adafruit_7segment();
 
@@ -77,13 +77,13 @@ void wifiOnConnect() {
   }
   else {
     Serial.println("connected succeeded");
-    wiThrottle.connect(&client);
-    wiThrottle.setDeviceName("mylittlethrottle");
+    wiThrottleProtocol.connect(&client);
+    wiThrottleProtocol.setDeviceName("mylittlethrottle");
   }
 }
 
 void wifiOnDisconnect() {
-  wiThrottle.disconnect();
+  wiThrottleProtocol.disconnect();
   Serial.println("STA Disconnected");
   delay(1000);
   WiFi.begin(ssid.c_str(), password.c_str());
@@ -143,8 +143,8 @@ void updateFastTimeDisplay()
 {
   static bool blinkColon = true;
 
-  int hour = wiThrottle.fastTimeHours();
-  int minutes = wiThrottle.fastTimeMinutes();
+  int hour = wiThrottleProtocol.fastTimeHours();
+  int minutes = wiThrottleProtocol.fastTimeMinutes();
 
   // Show the time on the display by turning it into a numeric
   // value, like 3:30 turns into 330, by multiplying the hour by
@@ -174,7 +174,7 @@ void updateFastTimeDisplay()
 void loop()
 {
   // call the .check method as often as you can.  This will perform any
-  // processing needed in the WiThrottle class (mostly reading data from
+  // processing needed in the WiThrottleProtocol class (mostly reading data from
   // the network and parsing the commands as they come in).
 
   // This method will return true if something "interesting" happened.
@@ -187,11 +187,11 @@ void loop()
   // as this provides a handy value for clock displays (such as blinking a colon
   // or an audible tick-tock noise, which shouldn't be sped up).
 
-  if (wiThrottle.check()) {
-    if (wiThrottle.clockChanged) { updateFastTimeDisplay(); }
+  if (wiThrottleProtocol.check()) {
+    if (wiThrottleProtocol.clockChanged) { updateFastTimeDisplay(); }
 
-    if (wiThrottle.protocolVersionChanged) {
-        Serial.print("PROTOCOL VERSION "); Serial.println(wiThrottle.protocolVersion);
+    if (wiThrottleProtocol.protocolVersionChanged) {
+        Serial.print("PROTOCOL VERSION "); Serial.println(wiThrottleProtocol.protocolVersion);
     }
   }
 }
