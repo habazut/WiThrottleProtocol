@@ -105,6 +105,8 @@ WiThrottleProtocol::connect(Stream *stream)
 void
 WiThrottleProtocol::disconnect()
 {
+    String command = "Q";
+    sendCommand(command);
     this->stream = NULL;
 }
 
