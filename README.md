@@ -19,6 +19,7 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
  - Added the ability to parse roster messages and to receive the roster list via delegate class
  - rudimentary support added for on-the-fly consists
  - rudimentary support added for turnouts
+ - rudimentary support added for routes
 
 ## Included examples
 
