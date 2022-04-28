@@ -288,7 +288,46 @@ WiThrottleProtocol::processLocomotiveAction(char *c, int len)
     }
 }
 
+// bool
+// WiThrottleProtocol::processTurnout(char *c, int len)
+// {
+//     String remainder(c);  // the leading "PTA" was not passed to this method
 
+//     if (remainder.length() > 0) {
+//         char action = remainder[0];
+//         int actionNo = action - 48;
+//         String systemName = remainder.substring(1,remainder.length()-1);
+//         mostRecentTurnout = systemName;
+
+//         switch (actionNo) {
+//             case TurnoutClosed:
+//                 mostRecentTurnoutState = TurnoutClosed;
+//                 //console->printf("processing turnout state\n");
+//                 break;
+//             case TurnoutThrown:
+//                 mostRecentTurnoutState = TurnoutThrown;
+//                 //console->printf("processing turnout state\n");
+//                 break;
+//             case TurnoutUnknown:
+//                 mostRecentTurnoutState = TurnoutUnknown;
+//                 //console->printf("processing turnout state\n");
+//                 break;
+//             case TurnoutInconsistent: 
+//                 mostRecentTurnoutState = TurnoutInconsistent;
+//                 //console->printf("processing turnout state\n");
+//                 break;
+//             default:
+//                 console->printf("unrecognized turnout action '%c'\n", action);
+//                 // no processing on unrecognized actions
+//                 break;
+//         }
+//         return true;
+//     }
+//     else {
+//         console->printf("insufficient action to process\n");
+//         return false;
+//     }
+// }
 
 bool
 WiThrottleProtocol::processCommand(char *c, int len)
@@ -352,6 +391,10 @@ WiThrottleProtocol::processCommand(char *c, int len)
     }
     else if (len > 8 && c[0]=='M' && c[1]=='T' && c[2]=='A') {
         return processLocomotiveAction(c+3, len-3);
+    }
+    else if (len > 5 && c[0]=='P' && c[1]=='T' && c[2]=='A') {
+        processTurnoutAction(c+3, len-3);
+        return true;
     }
     else if (len > 3 && c[0]=='A' && c[1]=='T' && c[2]=='+') {
         // this is an AT+.... command that the LnWi sometimes emits and we
@@ -676,6 +719,31 @@ WiThrottleProtocol::processStealNeeded(char *c, int len)
 
 
 
+void
+WiThrottleProtocol::processTurnoutAction(char *c, int len)
+{
+    if (delegate) {
+        String s(c);
+        String systemName = s.substring(1,s.length()-1);
+        TurnoutState state = TurnoutUnknown;
+        if (c[0]=='2') {
+            state = TurnoutClosed;
+        }
+        else if (c[0]=='4') {
+            state = TurnoutThrown;
+        }
+        else if (c[0]=='0') {
+            state = TurnoutUnknown;
+        }
+        else if (c[0]=='8') {
+            state = TurnoutInconsistent;
+        }
+
+        delegate->receivedTurnoutAction(systemName, state);
+    }
+}
+
+
 
 
 bool WiThrottleProtocol::checkHeartbeat() {
@@ -898,4 +966,18 @@ void WiThrottleProtocol::setTrackPower(TrackPower state) {
     cmd.concat(state);
 
     sendCommand(cmd);	
+}
+
+bool
+WiThrottleProtocol::setTurnout(String turnoutSystemName, TurnoutAction action) {  // address is turnout system name e.g.
+    String s = "T";
+    if (action==TurnoutClose) {
+        s = "C";
+    } else if (action==TurnoutToggle) {
+        s = "2";
+    }
+    String cmd = "PTA" + s + turnoutSystemName;
+    sendCommand(cmd);
+
+    return true;
 }

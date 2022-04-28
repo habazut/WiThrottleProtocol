@@ -50,6 +50,19 @@ typedef enum TrackPower {
     PowerUnknown = 2
 } TrackPower;
 
+typedef enum TurnoutState {
+    TurnoutClosed = 2,
+    TurnoutThrown = 4,
+    TurnoutUnknown = 0,
+    TurnoutInconsistent = 8
+} TurnoutState;
+
+typedef enum TurnoutAction {
+    TurnoutClose = 0,
+    TurnoutThrow = 1,
+    TurnoutToggle = 2
+} TurnoutAction;
+
 class NullStream : public Stream {
   
   public:
@@ -89,6 +102,8 @@ class WiThrottleProtocolDelegate
     virtual void addressAdded(String address, String entry) { }  // MT+addr<;>roster entry
     virtual void addressRemoved(String address, String command) { } // MT-addr<;>[dr]
     virtual void addressStealNeeded(String address, String entry) { } // MTSaddr<;>addr
+
+    virtual void receivedTurnoutAction(String systemName, TurnoutState state) { } //  PTAturnoutstatesystemname
 };
 
 
@@ -136,6 +151,8 @@ class WiThrottleProtocol
 
     void emergencyStop();
 
+    bool setTurnout(String address, TurnoutAction action);   // address is turnout system name e.g. LT92
+
     std::vector<String> locomotives;
     
 
@@ -165,6 +182,7 @@ class WiThrottleProtocol
     void processSpeed(const String& speedData);
     void processAddRemove(char *c, int len);
     void processStealNeeded(char *c, int len);
+    void processTurnoutAction(char *c, int len);
 
     bool checkFastTime();
     bool checkHeartbeat();
@@ -196,6 +214,9 @@ class WiThrottleProtocol
     int currentSpeed;
     int speedSteps;  // 1=128, 2=28, 4=27, 8=14, 16=28Mot
     Direction currentDirection;
+
+    String mostRecentTurnout;
+    TurnoutState mostRecentTurnoutState;
 };
 
 
