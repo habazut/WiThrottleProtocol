@@ -18,6 +18,7 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
  - Added a setter method for delegate class: setDelegate()
  - Added the ability to parse roster messages and to receive the roster list via delegate class
  - rudimentary support added for on-the-fly consists
+ - rudimentary support added for turnouts
 
 ## Included examples
 
