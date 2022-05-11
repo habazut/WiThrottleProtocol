@@ -758,14 +758,14 @@ WiThrottleProtocol::addLocomotive(String address)
         String cmd = "MT+" + address + PROPERTY_SEPARATOR + rosterName;
         sendCommand(cmd);
 
-        boolean locoAlreadtyInList = false;
+        boolean locoAlreadyInList = false;
         for(int i=0;i<locomotives.size();i++) {
             if (locomotives[i].equals(address)) {
-                locoAlreadtyInList = true;
+                locoAlreadyInList = true;
                 break;
             }
         } 
-        if (!locoAlreadtyInList) {
+        if (!locoAlreadyInList) {
             locomotives.push_back(address);
             currentAddress = locomotives.front();
 
