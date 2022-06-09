@@ -28,7 +28,7 @@
 
 //#include <ArduinoTime.h>
 //#include <TimeLib.h>
-#include <vector>
+#include <vector>  //https://github.com/arduino-libraries/Arduino_AVRSTL
 
 #include "WiThrottleProtocol.h"
 
@@ -367,8 +367,8 @@ WiThrottleProtocol::processCommand(char *c, int len)
         console->printf("unknown command '%s'\n", c);
         // all other commands are explicitly ignored
     }
+    return false;
 }
-
 
 
 void

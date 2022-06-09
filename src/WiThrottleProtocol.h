@@ -30,6 +30,7 @@
 #define WITHROTTLE_H
 
 #include "Arduino.h"
+#include <vector>  //https://github.com/arduino-libraries/Arduino_AVRSTL
 
 // Protocol special characters
 // see: https://www.jmri.org/help/en/package/jmri/jmrit/withrottle/Protocol.shtml#StringParsing
