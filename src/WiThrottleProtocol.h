@@ -96,6 +96,7 @@ class WiThrottleProtocolDelegate
 	virtual void receivedTurnoutEntry(int index, String sysName, String userName, int state) {}
 
 	virtual void receivedRouteEntries(int routeListSize) {}
+	virtual void receivedRouteEntry(int index, String sysName, String userName, int state) {}
 
     virtual void fastTimeChanged(uint32_t time) { }
     virtual void fastTimeRateChanged(double rate) { }

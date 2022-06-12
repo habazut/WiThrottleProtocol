@@ -509,7 +509,7 @@ void WiThrottleProtocol::processRosterList(char *c, int len) {
 		// get element
 		int entrySeparatorPosition = s.indexOf(ENTRY_SEPARATOR, entryStartPosition);
 		String entry = s.substring(entryStartPosition, entrySeparatorPosition);
-		console->print("Entry: "); console->println(i + 1);
+		console->print("Roster Entry: "); console->println(i + 1);
 		
 		// split element in segments and parse them		
 		String name;
@@ -551,8 +551,9 @@ void WiThrottleProtocol::processTurnoutList(char *c, int len) {
 
 		// get element
 		int entrySeparatorPosition = s.indexOf(ENTRY_SEPARATOR, entryStartPosition);
+        if (entrySeparatorPosition==-1) entrySeparatorPosition = s.length();
 		String entry = s.substring(entryStartPosition, entrySeparatorPosition);
-		console->print("Entry: "); console->println(entries + 1);
+		console->print("Turnout Entry: "); console->println(entries + 1);
 		
 		// split element in segments and parse them		
 		String sysName;
@@ -577,26 +578,68 @@ void WiThrottleProtocol::processTurnoutList(char *c, int len) {
 		if(delegate) delegate->receivedTurnoutEntry(entries, sysName, userName, state);
 		
 		entryStartPosition = entrySeparatorPosition + 3;
-        if (entryStartPosition >= sizeof(c)) entryFound = false;
+        console->println(entryStartPosition);
+        console->println(s.length());
+        if (entryStartPosition >= s.length()) entryFound = false;
 	}
 
 	// get the number of entries
-	console->print("Entries in Turnouts List: "); console->println(entries);
+	console->print("Entries in Turnouts List: "); console->println(entries+1);
 	// if set, call the delegate method
-	if (delegate) delegate->receivedTurnoutEntries(entries);	
+	if (delegate) delegate->receivedTurnoutEntries(entries+1);	
 
 }
 
 void WiThrottleProtocol::processRouteList(char *c, int len) {
   	String s(c);
 
+    // loop
+    int entries = -1;
+    boolean entryFound = true;
+	int entryStartPosition = 4; //ignore the first entry separator
+    if (sizeof(c) <= 3) entryFound =false;
+
+    while (entryFound) {
+	    entries++;
+
+		// get element
+		int entrySeparatorPosition = s.indexOf(ENTRY_SEPARATOR, entryStartPosition);
+        if (entrySeparatorPosition==-1) entrySeparatorPosition = s.length();
+		String entry = s.substring(entryStartPosition, entrySeparatorPosition);
+		console->print("Route Entry: "); console->println(entries + 1);
+		
+		// split element in segments and parse them		
+		String sysName;
+		String userName;
+        int state;
+		int segmentStartPosition = 0;
+		for(int j = 0; j < 3; j++) {
+		
+			// get segment
+			int segmentSeparatorPosition = entry.indexOf(SEGMENT_SEPARATOR, segmentStartPosition);
+			String segment = entry.substring(segmentStartPosition, segmentSeparatorPosition);
+			console->print(rosterSegmentDesc[j]); console->print(": "); console->println(segment);
+			segmentStartPosition = segmentSeparatorPosition + 3;
+			
+			// parse the segments
+			if(j == 0) sysName = segment;
+			else if(j == 1) userName = segment;
+			else if(j == 2) state = segment.toInt();
+		}
+		
+		// if set, call the delegate method
+		if(delegate) delegate->receivedRouteEntry(entries, sysName, userName, state);
+		
+		entryStartPosition = entrySeparatorPosition + 3;
+        console->println(entryStartPosition);
+        console->println(s.length());
+        if (entryStartPosition >= s.length()) entryFound = false;
+	}
+
 	// get the number of entries
-    int indexSeperatorPosition = s.indexOf(ENTRY_SEPARATOR,1);
-	int entries = s.substring(0, indexSeperatorPosition).toInt();
-	console->print("Entries in Routes List: "); console->println(entries);
-	
+	console->print("Entries in Turnouts List: "); console->println(entries+1);
 	// if set, call the delegate method
-	if (delegate) delegate->receivedRouteEntries(entries);	
+	if (delegate) delegate->receivedRouteEntries(entries+1);	
 
 }
 
