@@ -201,7 +201,7 @@ class WiThrottleProtocol
 
     void setCurrentFastTime(const String& s);
 
-    char inputbuffer[1024];
+    char inputbuffer[32767];
     ssize_t nextChar;  // where the next character to be read goes in the buffer
 
     //Chrono heartbeatTimer;

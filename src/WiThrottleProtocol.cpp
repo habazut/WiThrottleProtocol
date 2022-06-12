@@ -147,12 +147,23 @@ WiThrottleProtocol::check()
                 }
                 nextChar = 0;
             }
+
+
+
+
+
+
+
+
+
             else {
                 inputbuffer[nextChar] = b;
                 nextChar += 1;
-                if (nextChar == 1023) {
-                    inputbuffer[1023] = 0;
-                    console->print("ERROR LINE TOO LONG: ");
+                if (nextChar == (sizeof(inputbuffer)-1) ) {
+                    inputbuffer[sizeof(inputbuffer)-1] = 0;
+                    console->print("ERROR LINE TOO LONG: >");
+                    console->print(sizeof(inputbuffer));
+                    console->print(": ");
                     console->println(inputbuffer);
                     nextChar = 0;
                 }
@@ -339,6 +350,14 @@ WiThrottleProtocol::processCommand(char *c, int len)
         processRosterList(c+2, len-2);
         return true;
     }	
+    else if (len > 3 && c[0]=='P' && c[1]=='T' && c[2]=='L') {
+        console->println("XXX Turnout List");
+        return true;
+    }	
+    else if (len > 3 && c[0]=='P' && c[1]=='R' && c[2]=='L') {
+        console->println("XXX Route List");
+        return true;
+    }	
     else if (len > 6 && c[0]=='M' && c[1]=='T' && c[2]=='S') {
         processStealNeeded(c+3, len-3);
         return true;
@@ -476,7 +495,8 @@ void WiThrottleProtocol::processRosterList(char *c, int len) {
 	String s(c);
 
 	// get the number of entries
-	int entries = s.substring(0, 1).toInt();
+    int indexSeperatorPosition = s.indexOf(ENTRY_SEPARATOR,1);
+	int entries = s.substring(0, indexSeperatorPosition).toInt();
 	console->print("Entries in roster: "); console->println(entries);
 	
 	// if set, call the delegate method
