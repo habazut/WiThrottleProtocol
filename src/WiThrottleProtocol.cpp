@@ -351,11 +351,11 @@ WiThrottleProtocol::processCommand(char *c, int len)
         return true;
     }	
     else if (len > 3 && c[0]=='P' && c[1]=='T' && c[2]=='L') {
-        console->println("XXX Turnout List");
+        processTurnoutList(c+2, len-2);
         return true;
     }	
     else if (len > 3 && c[0]=='P' && c[1]=='R' && c[2]=='L') {
-        console->println("XXX Route List");
+        processRouteList(c+2, len-2);
         return true;
     }	
     else if (len > 6 && c[0]=='M' && c[1]=='T' && c[2]=='S') {
@@ -535,6 +535,69 @@ void WiThrottleProtocol::processRosterList(char *c, int len) {
 		
 		entryStartPosition = entrySeparatorPosition + 3;
 	}
+}
+
+void WiThrottleProtocol::processTurnoutList(char *c, int len) {
+  	String s(c);
+
+    // loop
+    int entries = -1;
+    boolean entryFound = true;
+	int entryStartPosition = 4; //ignore the first entry separator
+    if (sizeof(c) <= 3) entryFound =false;
+
+    while (entryFound) {
+	    entries++;
+
+		// get element
+		int entrySeparatorPosition = s.indexOf(ENTRY_SEPARATOR, entryStartPosition);
+		String entry = s.substring(entryStartPosition, entrySeparatorPosition);
+		console->print("Entry: "); console->println(entries + 1);
+		
+		// split element in segments and parse them		
+		String sysName;
+		String userName;
+        int state;
+		int segmentStartPosition = 0;
+		for(int j = 0; j < 3; j++) {
+		
+			// get segment
+			int segmentSeparatorPosition = entry.indexOf(SEGMENT_SEPARATOR, segmentStartPosition);
+			String segment = entry.substring(segmentStartPosition, segmentSeparatorPosition);
+			console->print(rosterSegmentDesc[j]); console->print(": "); console->println(segment);
+			segmentStartPosition = segmentSeparatorPosition + 3;
+			
+			// parse the segments
+			if(j == 0) sysName = segment;
+			else if(j == 1) userName = segment;
+			else if(j == 2) state = segment.toInt();
+		}
+		
+		// if set, call the delegate method
+		if(delegate) delegate->receivedTurnoutEntry(entries, sysName, userName, state);
+		
+		entryStartPosition = entrySeparatorPosition + 3;
+        if (entryStartPosition >= sizeof(c)) entryFound = false;
+	}
+
+	// get the number of entries
+	console->print("Entries in Turnouts List: "); console->println(entries);
+	// if set, call the delegate method
+	if (delegate) delegate->receivedTurnoutEntries(entries);	
+
+}
+
+void WiThrottleProtocol::processRouteList(char *c, int len) {
+  	String s(c);
+
+	// get the number of entries
+    int indexSeperatorPosition = s.indexOf(ENTRY_SEPARATOR,1);
+	int entries = s.substring(0, indexSeperatorPosition).toInt();
+	console->print("Entries in Routes List: "); console->println(entries);
+	
+	// if set, call the delegate method
+	if (delegate) delegate->receivedRouteEntries(entries);	
+
 }
 
 // the string passed in will look 'F03' (meaning turn off Function 3) or

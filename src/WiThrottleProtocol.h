@@ -92,6 +92,11 @@ class WiThrottleProtocolDelegate
 	virtual void receivedRosterEntries(int rosterSize) {}
 	virtual void receivedRosterEntry(int index, String name, int address, char length) {}
 
+    virtual void receivedTurnoutEntries(int turnoutListSize) {}    
+	virtual void receivedTurnoutEntry(int index, String sysName, String userName, int state) {}
+
+	virtual void receivedRouteEntries(int routeListSize) {}
+
     virtual void fastTimeChanged(uint32_t time) { }
     virtual void fastTimeRateChanged(double rate) { }
 
@@ -184,6 +189,8 @@ class WiThrottleProtocol
     void processServerDescription(char *c, int len);	
     void processWebPort(char *c, int len);
 	void processRosterList(char *c, int len);
+    void processTurnoutList(char *c, int len);
+    void processRouteList(char *c, int len);
     void processTrackPower(char *c, int len);
     void processFunctionState(const String& functionData);
     void processSpeedSteps(const String& speedStepData);
