@@ -144,6 +144,7 @@ class WiThrottleProtocol
     float getFastTimeRate();
     bool clockChanged;
 
+    String currentDeviceName;
     void requireHeartbeat(bool needed=true);
     bool heartbeatChanged;
 
@@ -169,6 +170,8 @@ class WiThrottleProtocol
     bool setRoute(String address);   // address is turnout system name e.g. IO:AUTO:0008
 
     std::vector<String> locomotives;
+    
+    long getLastServerResponseTime();  // seconds since Arduino start
     
 
   private:
@@ -235,6 +238,8 @@ class WiThrottleProtocol
 
     String mostRecentTurnout;
     TurnoutState mostRecentTurnoutState;
+
+    long lastServerResponseTime;
 };
 
 

@@ -113,6 +113,7 @@ WiThrottleProtocol::disconnect()
 void
 WiThrottleProtocol::setDeviceName(String deviceName)
 {
+    currentDeviceName = deviceName;
     String command = "N" + deviceName;
     sendCommand(command);
 }
@@ -147,15 +148,6 @@ WiThrottleProtocol::check()
                 }
                 nextChar = 0;
             }
-
-
-
-
-
-
-
-
-
             else {
                 inputbuffer[nextChar] = b;
                 nextChar += 1;
@@ -306,6 +298,8 @@ WiThrottleProtocol::processCommand(char *c, int len)
 
     console->print("<== ");
     console->println(c);
+
+    lastServerResponseTime = millis()/1000;
 
     // we regularly get this string as part of the data sent
     // by a Digitrax LnWi.  Remove it, and try again.
@@ -853,7 +847,8 @@ bool WiThrottleProtocol::checkHeartbeat() {
 	// if heartbeat is required and half of heartbeat period has passed, send a heartbeat and reset the timer
     if ((heartbeatPeriod > 0) && ((millis() - heartbeatTimer) > 0.5 * heartbeatPeriod * 1000)) {
 
-        sendCommand("*");
+        // sendCommand("*");
+        setDeviceName(currentDeviceName);  // resent the device name instead of the heartbeat.  this forces the wit server to respond
 		heartbeatTimer = millis();
 		
         return true;
@@ -1092,3 +1087,9 @@ WiThrottleProtocol::setRoute(String routeSystemName) {  // address is turnout sy
 
     return true;
 }
+
+long 
+WiThrottleProtocol::getLastServerResponseTime() {
+  return lastServerResponseTime;   
+}
+
