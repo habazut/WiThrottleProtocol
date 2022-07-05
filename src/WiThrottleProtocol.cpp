@@ -68,6 +68,9 @@ void WiThrottleProtocol::init() {
 	currentSpeed = 0;
 	speedSteps = 0;
 	currentDirection = Forward;
+
+    //last Response time
+    lastServerResponseTime = millis() /1000;
 	
 	// init change flags
     resetChangeFlags();
