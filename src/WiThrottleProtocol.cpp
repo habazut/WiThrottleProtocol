@@ -124,7 +124,7 @@ WiThrottleProtocol::setDeviceName(String deviceName)
 void
 WiThrottleProtocol::setDeviceID(String deviceId)
 {
-    String command = "H" + deviceId;
+    String command = "HU" + deviceId;
     sendCommand(command);
 }
 
