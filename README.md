@@ -20,6 +20,7 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
  - rudimentary support added for on-the-fly consists
  - rudimentary support added for turnouts
  - rudimentary support added for routes
+ - heartbeat sends the device name, which forces the WiThrottle server to respond (used to confirm it is still connected)
 
 ## Included examples
 
@@ -89,7 +90,7 @@ Detach the network client connection from the WiThrottleProtocol library.   The 
 ```
 bool check()
 ```
-This drvies all of the work of the library.  Call this method at least once every time ```loop()``` is called.   When using the library, make sure that you do not call ```delay()``` or anything else which takes up significant amounts of time.   
+This drives all of the work of the library.  Call this method at least once every time ```loop()``` is called.   When using the library, make sure that you do not call ```delay()``` or anything else which takes up significant amounts of time.   
 
 If this method returns ```true```, then a command was processed this time through the loop.  There will be many, many, many more times that ```check()``` is called and it returns ```false``` than when it returns ```true```.   
 
@@ -177,6 +178,24 @@ void emergencyStop()
 ```
 Send an emergency stop command.
 
+```
+setTurnout(String address, TurnoutAction action)
+```
+
+Set the state of a Turnout/Point.
+
+```
+setRoute(String address)
+```
+
+Set the state of a Route.
+
+```
+getLastServerResponseTime()
+```
+
+Get the last time the WiThrottle server responded, in seconds since the start of the Arduino.
+
 
 ## Delegate Methods
 
@@ -186,6 +205,28 @@ These methods will be called if the ```delegate``` instance variable is set.   A
 void receivedVersion(String version)
 ```
 The WiThrottle protocol version.  When the ```VNx.y``` command is received, this method will be called with the ```version``` parameter set to "x.y".
+
+```
+void receivedServerType(String type)
+```
+The WiThrottle Server Type.
+
+```
+void receivedServerDescription(String description)
+```
+The WiThrottle Server Description.
+
+```
+void receivedRosterEntries(int rosterSize)
+```
+
+Indicates that the WiThrottle Server has sent a list of Roster Entries.
+
+```
+void receivedRosterEntry(int index, String name, int address, char length)
+```
+
+Indicates that the WiThrottle Server has sent the details of an individual roster entry.
 
 ```
 void fastTimeChanged(uint32_t time)
@@ -249,6 +290,36 @@ void addressStealNeeded(String address, String entry)
 ```
 Indicates that the ```address``` cannot be selected because it is already in use.  You may wish to prompt the user if they wish to steal this locomotive (which can be then be done by using the ```stealLocomotive``` method).
 
+```
+void receivedTurnoutEntries(int turnoutListSize)
+```
+Indicates that the WiThrottle Server has sent a list of Turnout/Point Entries.
+
+```
+void receivedTurnoutEntry(int index, String sysName, String userName, int state)
+```
+Indicates that the WiThrottle Server has sent the details of an individual Turnout/Point entry.
+
+```
+void receivedTurnoutAction(String systemName, TurnoutState state)
+```
+Indicates that a Turnout has changed state.  This is to be used when there is some feedback to the user.
+
+```
+void receivedRouteEntries(int routeListSize)
+```
+
+Indicates that the WiThrottle Server has sent a list of Route Entries.
+
+```
+void receivedRouteEntry(int index, String sysName, String userName, int state)
+```
+Indicates that the WiThrottle Server has sent the details of an individual route entry.
+
+```
+void receivedRouteAction(String systemName, RouteState state)
+```
+Indicates that a Route has changed state.  This is to be used when there is some feedback to the user.
 
 
 ## Todos

@@ -87,16 +87,16 @@ class WiThrottleProtocolDelegate
   public:
   
     virtual void receivedVersion(String version) {}
-	virtual void receivedServerType(String type) {}
-	virtual void receivedServerDescription(String description) {}
-	virtual void receivedRosterEntries(int rosterSize) {}
-	virtual void receivedRosterEntry(int index, String name, int address, char length) {}
+    virtual void receivedServerType(String type) {}
+    virtual void receivedServerDescription(String description) {}
+    virtual void receivedRosterEntries(int rosterSize) {}
+    virtual void receivedRosterEntry(int index, String name, int address, char length) {}
 
     virtual void receivedTurnoutEntries(int turnoutListSize) {}    
-	virtual void receivedTurnoutEntry(int index, String sysName, String userName, int state) {}
+    virtual void receivedTurnoutEntry(int index, String sysName, String userName, int state) {}
 
-	virtual void receivedRouteEntries(int routeListSize) {}
-	virtual void receivedRouteEntry(int index, String sysName, String userName, int state) {}
+    virtual void receivedRouteEntries(int routeListSize) {}
+    virtual void receivedRouteEntry(int index, String sysName, String userName, int state) {}
 
     virtual void fastTimeChanged(uint32_t time) { }
     virtual void fastTimeRateChanged(double rate) { }
