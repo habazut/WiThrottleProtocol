@@ -17,10 +17,14 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
  - Changed begin() method to setLogStream()
  - Added a setter method for delegate class: setDelegate()
  - Added the ability to parse roster messages and to receive the roster list via delegate class
- - rudimentary support added for on-the-fly consists
- - rudimentary support added for turnouts
- - rudimentary support added for routes
- - heartbeat sends the device name, which forces the WiThrottle server to respond (used to confirm it is still connected)
+ 
+ ## Differences from the lucadentella version of the library
+ - Added the trademark changes from the original library
+ - Rudimentary support added for on-the-fly consists
+ - Support added for turnouts/points
+ - Support added for routes
+ - Heartbeat sends the device name, which forces the WiThrottle server to respond (used to confirm it is still connected)
+ - bug fixes
 
 ## Included examples
 
